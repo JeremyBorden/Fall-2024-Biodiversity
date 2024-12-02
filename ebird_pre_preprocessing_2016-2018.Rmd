@@ -1,0 +1,113 @@
+---
+title: "eBird basic preprocessing 2016-2018"
+output: html_notebook
+---
+```{r}
+library(auk)
+library(dplyr)
+library(ggplot2)
+library(gridExtra)
+library(lubridate)
+library(readr)
+library(sf)
+```
+```{r}
+# To produce zero-filled data, we input an EBD file and sampling event data file
+f_ebd <- "ebd_BR_smp_relSep-2024/ebd_BR_smp_relSep-2024.txt"
+f_smp <- "ebd_BR_smp_relSep-2024/ebd_BR_smp_relSep-2024_sampling.txt"
+filters <- auk_ebd(f_ebd, file_sampling = f_smp) %>% 
+  auk_date(date = c("2016-01-01", "2018-12-31")) %>%  # Filter a selection of years
+  auk_complete() # Take only 'complete' checklists - every species that could be identified was reported
+filters 
+```
+
+
+```{r} 
+# Execute the filters on the EBD data and the sampling data
+ebd_sed_filtered <- auk_filter(filters, 
+                                file = "ebd-filtered_16-18.txt",
+                                file_sampling = "sampling-filtered_16-18.txt")
+ebd_sed_filtered
+```
+
+
+```{r}
+checks_16_18 <- read_sampling("sampling-filtered_16-18.txt")
+glimpse(checks_16_18)
+```
+
+
+```{r}
+obs_16_18 <- read_ebd("ebd-filtered_16-18.txt")
+glimpse(obs_16_18)
+```
+
+
+```{r}
+# Remove any observations without matching checklists
+obs_16_18 <- semi_join(obs_16_18, checks_16_18, by = "checklist_id")
+```
+
+
+```{r}
+# zero-fill the data - combine observation and checklist data to infer species absences
+ebd_zf_16_18 <- auk_zerofill(obs_16_18, checks_16_18, collapse = TRUE)
+glimpse(ebd_zf_16_18)
+```
+
+
+```{r}
+# These functions taken from ebird best practices github
+# function to convert time observation to hours since midnight
+time_to_decimal <- function(x) {
+  x <- hms(x, quiet = TRUE)
+  hour(x) + minute(x) / 60 + second(x) / 3600
+}
+
+# clean up variables
+ebd_zf_16_18 <- ebd_zf_16_18 |> 
+  mutate(
+    # convert count to integer and X to NA
+    # ignore the warning "NAs introduced by coercion"
+    observation_count = as.integer(observation_count),
+    # effort_distance_km to 0 for stationary counts
+    effort_distance_km = if_else(protocol_type == "Stationary", 
+                                 0, effort_distance_km),
+    # convert duration to hours
+    effort_hours = duration_minutes / 60,
+    # speed km/h
+    effort_speed_kmph = effort_distance_km / effort_hours,
+    # convert time to decimal hours since midnight
+    hours_of_day = time_to_decimal(time_observations_started),
+    # split date into year and day of year
+    year = year(observation_date),
+    day_of_year = yday(observation_date)
+  )
+```
+
+
+```{r}
+# additional filtering - again taken from ebird best practices github in accordance with their recommendations for acommodating variations in # effort. This is a very substantial reduction in the amount of data.
+ebd_zf_16_18 <- ebd_zf_16_18 |> 
+  filter(protocol_type %in% c("Stationary", "Traveling"),
+         effort_hours <= 6,
+         effort_distance_km <= 10,
+         effort_speed_kmph <= 100,
+         number_observers <= 10)
+```
+
+
+```{r}
+glimpse(ebd_zf_16_18)
+```
+
+
+```{r}
+birds_16_18 <- ebd_zf_16_18 |> 
+  select(checklist_id, state_code, locality_id, latitude, longitude, observation_date, protocol_type, duration_minutes, 
+         effort_distance_km, number_observers, scientific_name, observation_count, species_observed, effort_hours, effort_speed_kmph,
+         hours_of_day, year, day_of_year )
+
+write_csv(birds_16_18, "birds_16_18.csv", na = "")
+```
+
