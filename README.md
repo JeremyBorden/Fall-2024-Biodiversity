@@ -2,7 +2,7 @@
 
 Jeremy Borden, Chelsey Hunts, Dawit Mengesha, Yusup Amat, Sriram Raghunath
 
-This repo contains the project 'Occupancy Modelling of Birds in the Amazon Rainforest. 
+This repo contains the project 'Occupancy Modeling of Birds in the Amazon Rainforest. 
 
 A brief summary of our project:
 
