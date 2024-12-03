@@ -3,7 +3,9 @@
 Jeremy Borden, Chelsey Hunts, Dawit Mengesha, Yusup Amat, Sriram Raghunath
 
 This repo contains the project 'Occupancy Modelling of Birds in the Amazon Rainforest. 
+
 A brief summary of our project:
+
 Our goals for this project were to test different occupancy modeling strategies to explore if and how climate change or forest loss has affected bird populations in the Amazonas region of Brazil over the time period of 2012 – 2021, and subsequently evaluate which models performed the best. We tested this for two species – a generalist species, Black vulture (Coragyps atratus) and a forest specialist, Screaming piha (Lipaugus vociferans). We used three different modeling approaches, two standard machine learning classification models – balanced random forest and binary logistic regression – and one modern occupancy modeling approach using the R package spOccupancy. 
 
 The files contained in this repo:
