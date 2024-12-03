@@ -9,6 +9,8 @@ Our goals for this project were to test different occupancy modeling strategies 
 The files contained in this repo:
 
 - raw_data folder : Contains all the relevant data (in csv format)
+
+- Occupancy_Modelling_Executive_Summary.pdf : A more comprehensive overview of our project, including details on our data collection, model development and testing, and project conclusions and outcomes 
   
 - Occupancy_modeling_with_SpOccupancy.ipynb : Notebook containing our occupancy model implementations using the R-package spOccupancy
 
