@@ -18,7 +18,7 @@ The files contained in this repo:
 
 - ml_classification.ipynb : Notebook containing our machine learning classification approaches (implemented in python)
 
-- pre-ebird_pre_preprocessing_example.Rmd : An R markdown file containing the earliest stage of prepreocessing (pre-processing) for eBird data. Note that the original eBird data set we obtained was very large and this pre-preprocessing was too memory-intensive to run for the whole data set at once. So this step was batched by splitting up the original eBird data set. The markdown file included here is an example of one such batch.
+- pre-ebird_pre_preprocessing_example.Rmd : An R markdown file containing the earliest stage of prepreocessing (pre-preprocessing) for eBird data. Note that the original eBird data set we obtained was very large and this pre-preprocessing was too memory-intensive to run for the whole data set at once. So this step was batched by splitting up the original eBird data set. The markdown file included here is an example of one such batch.
 
 - pre-selecting_sites_and_species.ipynb : A preprocessing notebook where we select the sites and bird species within the Amazonas state to use for model development.
 
